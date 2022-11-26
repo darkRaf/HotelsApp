@@ -1,13 +1,16 @@
 import React from 'react';
+import withMousePosition from '../../hoc/withMousePosition';
 import styles from './Header.module.css';
-import Searchbar from './Searchbar/Searchbar';
 
 function Header(props) {
   return (
-    <header className={`${styles.header} container`}>
-      <Searchbar onSearch = {props.onSearch}/>
+    <header className={`${styles.header}`}>
+      {props.mouseX}
+      {props.mouseY}
+      {props.children}
+      {/* <Searchbar onSearch = {props.onSearch}/> */}
     </header>
   );
 }
 
-export default Header;
+export default withMousePosition(Header);
