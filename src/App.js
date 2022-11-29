@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import './App.css';
 import Header from './componets/Header/Header';
 import Searchbar from './componets/UI/Searchbar/Searchbar';
@@ -32,11 +32,56 @@ const backendHotels = [
   },
 ];
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'change-theme':
+      const theme = state.theme === 'danger' ? 'primary' : 'danger'
+      return {
+        ...state,
+        theme,
+      };
+
+    case 'set-hotels':
+      return {
+        ...state,
+        hotels: action.hotels,
+      };
+
+    case 'set-loading':
+      return {
+        ...state,
+        loading: action.loading,
+      };
+    case 'login':
+      return {
+        ...state,
+        isAuthenticated: true
+      };
+    case 'logout':
+      return {
+        ...state,
+        isAuthenticated: false,
+      };
+
+    default:
+      throw new Error('Nie ma takiej akcji: ' + action.type);
+  }
+};
+
+const initialState = {
+  hotels: [],
+  loading: true,
+  isAuthenticated: false,
+  theme: 'danger',
+};
+
 const App = () => {
-  const [hotels, setHotels] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState('danger');
-  const [isAuthenticated, setIiAuthenticated] = useState(false);
+  // const [hotels, setHotels] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [theme, setTheme] = useState('danger');
+  // const [isAuthenticated, setIiAuthenticated] = useState(false);
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // 1.
   // const [state, setState] = useState({
@@ -46,53 +91,62 @@ const App = () => {
   //   isAuthenticated: true,
   // });
 
-  const changeTeme = () => {
-    const newTheme = theme === 'primary' ? 'danger' : 'primary';
-    setTheme(newTheme);
+  // const changeTeme = () => {
+  //   dispatch({ type: 'change-theme' });
 
-    // 1.
-    // const newState = {...state};
-    // newState.theme = 'warning';
-    // setState({ newState });
-  };
+  // const newTheme = theme === 'primary' ? 'danger' : 'primary';
+  // setTheme(newTheme);
+
+  // 1.
+  // const newState = {...state};
+  // newState.theme = 'warning';
+  // setState({ newState });
+  // };
 
   const searchHandler = term => {
     // console.log('App', term);
-    const newHotels = [...backendHotels].filter(x => x.name.toLowerCase().includes(term.toLowerCase()));
-    setHotels(newHotels);
+    const newHotels = [...backendHotels].filter(x =>
+      x.name.toLowerCase().includes(term.toLowerCase())
+    );
+    // setHotels(newHotels);
+    dispatch({ type: 'set-hotels', hotels: newHotels });
   };
 
   useEffect(() => {
     setTimeout(() => {
-      setHotels(backendHotels);
-      setLoading(false);
+      // setHotels(backendHotels);
+      dispatch({ type: 'set-hotels', hotels: backendHotels });
+      // setLoading(false);
+      dispatch({ type: 'set-loading', loading: false });
     }, 1000);
   }, []);
 
   const header = (
     <Header>
       <Searchbar onSearch={term => searchHandler(term)} />
-      <ThemeButton onChange={changeTeme} />
+      <ThemeButton />
     </Header>
   );
 
   const menu = <Menu />;
 
-  const content = loading ? <LoadingIcon /> : <Hotels hotels={hotels} />;
+  const content = state.loading ? <LoadingIcon /> : <Hotels hotels={state.hotels} />;
 
   const footer = <Footer />;
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: isAuthenticated,
-        login: () => setIiAuthenticated(true),
-        logout: () => setIiAuthenticated(false),
+        isAuthenticated: state.isAuthenticated,
+        // login: () => setIiAuthenticated(true),
+        login: () => dispatch({ type: 'login' }),
+        // logout: () => setIiAuthenticated(false),
+        logout: () => dispatch({ type: 'logout' }),
       }}>
       <ThemeContext.Provider
         value={{
-          color: theme,
-          changeColor: changeTeme,
+          color: state.theme,
+          changeColor: () => dispatch({ type: 'change-theme' }),
         }}>
         <div className='App'>
           <Layout header={header} menu={menu} content={content} footer={footer} />
