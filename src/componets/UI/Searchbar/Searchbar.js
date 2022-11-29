@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import PropsTypes from 'prop-types';
 import ThemeContext from '../../../context/themeContext';
 
@@ -8,16 +8,26 @@ const propTypes = {
 
 function Searchbar(props) {
   const [term, setTerm] = useState('');
-
   const theme = useContext(ThemeContext);
+
+  const inputRef = useRef();
 
   const search = () => {
     props.onSearch(term);
   };
 
+  const focusInput = () => {
+    inputRef.current.focus();
+  }
+
+  useEffect(() => {
+    focusInput();
+  }, []);
+
   return (
     <div className='d-flex'>
       <input
+        ref={inputRef}
         // style={{
         //   width: 'calc(100% - 20px)',
         // }}

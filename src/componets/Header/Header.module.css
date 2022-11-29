@@ -1,14 +1,25 @@
 .header {
   height: 150px;
-  background-color: #cdcdcd;
-  background: url(../../assets/images/unsplash_mi7W_V4slxg.png) center;
-  background-size: cover;
+
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px 15px;
+  overflow: hidden;
+  position: relative;
 }
 
+.headerImage {
+  background-color: #cdcdcd;
+  background: url(../../assets/images/unsplash_mi7W_V4slxg.png) center;
+  background-size: 110%;
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  bottom: -5%;
+  right: -5%;
+  z-index: -1;
+}
 /* .input {
   width: calc(100% - 20px);
 } */
