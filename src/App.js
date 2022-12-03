@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import './App.css';
 import Header from './componets/Header/Header';
 import Searchbar from './componets/UI/Searchbar/Searchbar';
@@ -10,6 +10,8 @@ import Footer from './componets/Footer/Footer';
 import ThemeButton from './componets/UI/ThemeButton/ThemeButton';
 import ThemeContext from './context/themeContext';
 import AuthContext from './context/authContext';
+import { BestHotel } from './componets/Hotels/BestHotel/BestHotel';
+import { InspiringQuote } from './componets/InspiringQuote/InspiringQuote';
 
 const backendHotels = [
   {
@@ -112,6 +114,14 @@ const App = () => {
     dispatch({ type: 'set-hotels', hotels: newHotels });
   };
 
+  const getBesthotel = useCallback(options => {
+    if (state.hotels.length < options.minHotels) {
+      return null;
+    } else {
+      return state.hotels.sort((a,b) => a.rating > b.rating ? -1 : 1)[0];
+    }
+  }, [state.hotels]);
+  
   useEffect(() => {
     setTimeout(() => {
       // setHotels(backendHotels);
@@ -123,6 +133,7 @@ const App = () => {
 
   const header = (
     <Header>
+      <InspiringQuote />
       <Searchbar onSearch={term => searchHandler(term)} />
       <ThemeButton />
     </Header>
@@ -130,7 +141,12 @@ const App = () => {
 
   const menu = <Menu />;
 
-  const content = state.loading ? <LoadingIcon /> : <Hotels hotels={state.hotels} />;
+  const content = state.loading
+    ? <LoadingIcon />
+    : (<>
+        <BestHotel getHotel={getBesthotel}></BestHotel>
+        <Hotels hotels={state.hotels} />
+      </>);
 
   const footer = <Footer />;
 

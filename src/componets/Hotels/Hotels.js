@@ -7,16 +7,17 @@ const propTypes = {
   hotels: PropTypes.array.isRequired,
 };
 
-const slowFunction = (count) => {
-  for (let i = 0; i < 1000000000; i++) {}
-  return count;
-}
+// const slowFunction = (count) => {
+//   for (let i = 0; i < 1000000000; i++) {}
+//   return count;
+// }
 function Hotels(props) {
 
   useEffect(() => console.log('hotels render'));
 
   const count = useMemo(() => {
-    return slowFunction(props.hotels.length);
+    // return slowFunctions(props.hotels.length);
+    return props.hotels.length
   }, [props.hotels.length]);
 
   return (
