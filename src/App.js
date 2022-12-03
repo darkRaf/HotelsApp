@@ -114,14 +114,14 @@ const App = () => {
     dispatch({ type: 'set-hotels', hotels: newHotels });
   };
 
-  const getBesthotel = useCallback(options => {
-    if (state.hotels.length < options.minHotels) {
+  const getBesthotel = useCallback(() => {
+    if (state.hotels.length < 2) {
       return null;
     } else {
       return state.hotels.sort((a,b) => a.rating > b.rating ? -1 : 1)[0];
     }
   }, [state.hotels]);
-  
+
   useEffect(() => {
     setTimeout(() => {
       // setHotels(backendHotels);
@@ -144,7 +144,7 @@ const App = () => {
   const content = state.loading
     ? <LoadingIcon />
     : (<>
-        <BestHotel getHotel={getBesthotel}></BestHotel>
+        {getBesthotel() ? <BestHotel getHotel={getBesthotel}></BestHotel>: null}
         <Hotels hotels={state.hotels} />
       </>);
 
